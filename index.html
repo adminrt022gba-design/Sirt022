@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIRT 022</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f3f4f6;
+      color: #1f2937;
+    }
+
+    .header {
+      background: #0f766e;
+      color: white;
+      padding: 24px 18px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 28px;
+      margin-bottom: 6px;
+    }
+
+    .header p {
+      opacity: .9;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 3px 12px rgba(0,0,0,.08);
+    }
+
+    .card h2 {
+      margin-bottom: 10px;
+      color: #0f766e;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .menu {
+      display: block;
+      width: 100%;
+      border: none;
+      border-radius: 12px;
+      padding: 18px 12px;
+      background: #f0fdfa;
+      color: #115e59;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .menu:hover {
+      background: #ccfbf1;
+    }
+
+    .login {
+      max-width: 420px;
+      margin: 50px auto;
+    }
+
+    input {
+      width: 100%;
+      padding: 13px;
+      margin: 7px 0;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      font-size: 15px;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 13px;
+      border: none;
+      border-radius: 10px;
+      background: #0f766e;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+
+    .btn.logout {
+      background: #dc2626;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .stat {
+      text-align: center;
+      padding: 18px;
+      background: #f8fafc;
+      border-radius: 12px;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 28px;
+      color: #0f766e;
+    }
+
+    #status {
+      margin-top: 12px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    @media (max-width: 600px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .container {
+        padding: 14px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- LOGIN -->
+  <section id="loginPage">
+    <div class="login card">
+      <h2>Login SIRT 022</h2>
+      <p style="margin-bottom:15px;">Silakan masuk untuk melanjutkan.</p>
+
+      <input
+        type="email"
+        id="email"
+        placeholder="Email"
+        autocomplete="email"
+      >
+
+      <input
+        type="password"
+        id="password"
+        placeholder="Password"
+        autocomplete="current-password"
+      >
+
+      <button class="btn" onclick="login()">
+        Masuk
+      </button>
+
+      <div id="status"></div>
+    </div>
+  </section>
+
+
+  <!-- PORTAL -->
+  <section id="portalPage" class="hidden">
+
+    <div class="header">
+      <h1>SIRT 022</h1>
+      <p>Sistem Informasi Rukun Tetangga 022</p>
+    </div>
+
+    <div class="container">
+
+      <!-- REKAP -->
+      <div class="card">
+        <h2>Ringkasan Warga</h2>
+
+        <div class="grid">
+
+          <div class="stat">
+            <strong id="totalWarga">0</strong>
+            Warga
+          </div>
+
+          <div class="stat">
+            <strong id="totalKK">0</strong>
+            KK
+          </div>
+
+        </div>
+      </div>
+
+
+      <!-- MENU -->
+      <div class="card">
+        <h2>Menu Utama</h2>
+
+        <div class="grid">
+
+          <button class="menu" onclick="openMenu('warga')">
+            👥 Data Warga
+          </button>
+
+          <button class="menu" onclick="openMenu('pembayaran')">
+            💰 Pembayaran
+          </button>
+
+          <button class="menu" onclick="openMenu('laporan')">
+            📝 Laporan / Usulan
+          </button>
+
+          <button class="menu" onclick="openMenu('pengumuman')">
+            📢 Pengumuman
+          </button>
+
+          <button class="menu" onclick="openMenu('pengurus')">
+            👨‍💼 Pengurus RT
+          </button>
+
+          <button class="menu" onclick="openMenu('penting')">
+            ☎️ Nomor Penting
+          </button>
+
+        </div>
+      </div>
+
+
+      <!-- KONTEN -->
+      <div id="contentArea" class="card">
+        <h2>Selamat Datang</h2>
+        <p>
+          Portal SIRT 022 siap digunakan.
+        </p>
+      </div>
+
+
+      <button class="btn logout" onclick="logout()">
+        Keluar
+      </button>
+
+    </div>
+  </section>
+
+
+  <!-- SUPABASE -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+
+    /*
+      KONFIGURASI SUPABASE
+      Nanti kita isi setelah file dasar berhasil dibuat.
+    */
+
+    const SUPABASE_URL =
+      "https://kwjadchayfyxvgudmcv.supabase.co";
+
+    const SUPABASE_ANON_KEY =
+      "ISI_ANON_KEY_SUPABASE_DI_SINI";
+
+    const supabaseClient =
+      window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+      );
+
+
+    // =========================
+    // LOGIN
+    // =========================
+
+    async function login() {
+
+      const email =
+        document.getElementById("email").value.trim();
+
+      const password =
+        document.getElementById("password").value;
+
+      const status =
+        document.getElementById("status");
+
+      if (!email || !password) {
+        status.innerText =
+          "Email dan password wajib diisi.";
+        return;
+      }
+
+      status.innerText = "Memproses...";
+
+      const { data, error } =
+        await supabaseClient.auth.signInWithPassword({
+          email,
+          password
+        });
+
+      if (error) {
+        status.innerText =
+          "Login gagal: " + error.message;
+        return;
+      }
+
+      document
+        .getElementById("loginPage")
+        .classList.add("hidden");
+
+      document
+        .getElementById("portalPage")
+        .classList.remove("hidden");
+
+      await loadDashboard();
+    }
+
+
+    // =========================
+    // CEK SESSION
+    // =========================
+
+    async function checkSession() {
+
+      const { data } =
+        await supabaseClient.auth.getSession();
+
+      if (data.session) {
+
+        document
+          .getElementById("loginPage")
+          .classList.add("hidden");
+
+        document
+          .getElementById("portalPage")
+          .classList.remove("hidden");
+
+        await loadDashboard();
+      }
+    }
+
+
+    // =========================
+    // DASHBOARD
+    // =========================
+
+    async function loadDashboard() {
+
+      /*
+        Rekap akan kita sambungkan
+        ke tabel warga setelah struktur
+        database selesai dipastikan.
+      */
+
+      document.getElementById("totalWarga")
+        .innerText = "0";
+
+      document.getElementById("totalKK")
+        .innerText = "0";
+    }
+
+
+    // =========================
+    // MENU
+    // =========================
+
+    function openMenu(menu) {
+
+      const content =
+        document.getElementById("contentArea");
+
+      if (menu === "warga") {
+
+        content.innerHTML = `
+          <h2>👥 Data Warga</h2>
+          <p>
+            Di sini admin akan mengelola data warga,
+            termasuk nama, No. KK, Blok dan Gang.
+          </p>
+          <br>
+          <button class="btn">
+            + Tambah Warga
+          </button>
+        `;
+
+      } else if (menu === "pembayaran") {
+
+        content.innerHTML = `
+          <h2>💰 Pembayaran</h2>
+          <p>
+            Pengelolaan pembayaran bulanan warga.
+          </p>
+          <br>
+          <button class="btn">
+            + Catat Pembayaran
+          </button>
+        `;
+
+      } else if (menu === "laporan") {
+
+        content.innerHTML = `
+          <h2>📝 Laporan / Usulan Warga</h2>
+          <p>
+            Daftar laporan dan usulan dari warga.
+          </p>
+        `;
+
+      } else if (menu === "pengumuman") {
+
+        content.innerHTML = `
+          <h2>📢 Pengumuman</h2>
+          <p>
+            Admin dapat membuat dan mengelola
+            pengumuman untuk warga.
+          </p>
+        `;
+
+      } else if (menu === "pengurus") {
+
+        content.innerHTML = `
+          <h2>👨‍💼 Pengurus RT</h2>
+          <p>
+            Struktur pengurus RT 022 akan ditampilkan
+            di bagian ini.
+          </p>
+        `;
+
+      } else if (menu === "penting") {
+
+        content.innerHTML = `
+          <h2>☎️ Nomor Penting</h2>
+          <p>Ambulance</p>
+          <p>PLN</p>
+          <p>Pemadam Kebakaran</p>
+          <p>Kepolisian</p>
+        `;
+      }
+    }
+
+
+    // =========================
+    // LOGOUT
+    // =========================
+
+    async function logout() {
+
+      await supabaseClient.auth.signOut();
+
+      document
+        .getElementById("portalPage")
+        .classList.add("hidden");
+
+      document
+        .getElementById("loginPage")
+        .classList.remove("hidden");
+
+      document.getElementById("email").value = "";
+      document.getElementById("password").value = "";
+      document.getElementById("status").innerText = "";
+    }
+
+
+    checkSession();
+
+  </script>
+
+</body>
+</html>
